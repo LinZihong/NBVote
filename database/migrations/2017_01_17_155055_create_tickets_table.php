@@ -20,6 +20,7 @@ class CreateTicketsTable extends Migration
             $table->string('active')->default('0'); // only when 1 can be used
             $table->string('is_used')->default('0'); // used 1
             $table->string('string');
+            $table->string('vote_group_id');
             $table->timestamps();
         });
 
