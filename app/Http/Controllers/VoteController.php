@@ -34,7 +34,7 @@ class VoteController extends Controller
 	{
 		$votes = VoteGroup::with('votes')->orderBy('created_at', 'desc')->get();
 
-		return JsonData($votes);
+		return JsonData($votes);//@TODO eager load necessary relations
 	}
 
 	/**
@@ -131,10 +131,10 @@ class VoteController extends Controller
 
 	public function cacheOptions(Request $request)
     {
-        $option = $request->option_id;
-        $status = $request->status;
-        $time = $request->time;
-        $ticket = $request->ticket;
+        $option = $request['option_id'];
+        $status = $request['status'];
+        $time = $request['time'];
+        $ticket = $request['ticket'];
         if(empty($cached = OptionCache::where('option', $option)->where('ticket', $ticket)->first()))
         {
             OptionCache::create([
@@ -143,7 +143,7 @@ class VoteController extends Controller
                 'ticket' => $ticket,
                 'update_time' => $time
             ]);
-            return 'Saved!';
+            return JsonData('Saved!');
         }
         else if($time > $cached->update_time)
         {
@@ -151,7 +151,7 @@ class VoteController extends Controller
             $cached->status = $status;
             $cached->save();
         }
-        return 'Cached!';
+        return JsonData('Cached!');
     }
 
     public function getCachedOptions(Request $request)
