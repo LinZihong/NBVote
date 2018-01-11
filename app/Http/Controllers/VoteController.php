@@ -76,14 +76,14 @@ class VoteController extends Controller
 	public function voteHandler(Request $request)
 	{
 		// init
-		$voteId = $request->id;
-		$ticket = Ticket::ticket($request->ticket);
-		$answers = collect(json_decode($request->selected));
-		$vote = Vote::Id($request->id);
+		$voteId = $request['id'];
+		$ticket = Ticket::ticket($request['ticket']);
+		$answers = collect(json_decode($request['selected']));
+		$vote = Vote::find($request['id']);
 		$voteIsValid = false;
 
 		if (!$this->checkIfAllFilled($answers, $vote)) { //并且所有的选项填完了
-			return redirect()->back()->withErrors(['warning' => __('vote.option_left_not_filled')]);
+			return JsonStatus('vote.option_left_not_filled', 401);
 		}
 		if ($this->checkIfNoRepeatingOptions($answers) && $this->checkIfOptionsFilledMatch($answers, $vote)) {
 			$voteIsValid = true;
@@ -101,7 +101,7 @@ class VoteController extends Controller
 					}
 					event(new UpdateModelIPAddress('ticket', $ticket->id, 'vote.ticket', $request->ip()));
 
-					return redirect('/vote/id/' . $voteId . '/ticket/' . $ticket->string . '/result/');
+//					return redirect('/vote/id/' . $voteId . '/ticket/' . $ticket->string . '/result/');
 					break;
 				case 'user':
 					$userId = $request->user()->id;
@@ -114,11 +114,18 @@ class VoteController extends Controller
 					}
 
 //					return redirect('/vote/id/' . $voteId . '/result/');
-                    return "Voted successfully, but you cannot view the result now.";
 					break;
 			}
+            if($vote->show_result == 0)
+            {
+                return JsonData(['result' => 'Voted Successfully', 'show_result' => 'false']);
+            }
+            else
+            {
+                return JsonData(['result' => 'Voted Successfully', 'show_result' => 'true']);//Negotiate frontend url rules
+            }
 		} else {
-			return redirect('/error/custom')->withErrors(['warning' => __('vote.checksum_fail')]);
+			return JsonStatus('vote.checksum_fail', 401);
 		}
 	}
 

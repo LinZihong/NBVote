@@ -15,6 +15,9 @@ class EventServiceProvider extends ServiceProvider
 		'App\Events\SomeEvent' => [
 			'App\Listeners\LogAction',
 		],
+        'App\Events\UpdateModelIPAddress' => [
+            'App\Listeners\UpdateModelIPAddressNotification',
+        ]
 	];
 
 	protected $subscribe = [
