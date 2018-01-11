@@ -34,7 +34,7 @@ class VoteController extends Controller
 	{
 		$votes = VoteGroup::with('votes')->orderBy('created_at', 'desc')->get();
 
-		return view('vote.index')->withVotes($votes);
+		return JsonData($votes);
 	}
 
 	/**
@@ -45,9 +45,9 @@ class VoteController extends Controller
 	 */
 	public function showVoteGroup(Request $request)
 	{
-		$ticket = Ticket::ticket($request->ticket);
+		$ticket = Ticket::ticket($request['ticket']);
 
-		return view('vote.landing')->withTicket($ticket);
+		return JsonData($ticket);
 	}
 
 	/**
@@ -61,8 +61,9 @@ class VoteController extends Controller
 	{
 		$id = $request->id;
 		// return Vote::find($id)->with('questions', 'questions.options')->first();
-
-		return view('vote.individual')->withVote(Vote::with('questions', 'questions.options')->find($id))->withTicket($request->ticket); //Else show vote page
+        $vote = Vote::with('questions', 'questions.options')->find($id);
+        $ticket = $request['ticket'];
+        return JsonData(['vote' => $vote, 'ticket' => $ticket]);
 	}
 
 	/**
