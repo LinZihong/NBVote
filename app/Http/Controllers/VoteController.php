@@ -156,7 +156,7 @@ class VoteController extends Controller
 
     public function getCachedOptions(Request $request)
     {
-        return OptionCache::where('ticket', $request->ticket)->get();
+        return JsonData(OptionCache::where('ticket', $request['ticket'])->get());
     }
 
 	/**
@@ -167,12 +167,12 @@ class VoteController extends Controller
 	 */
 	public function showVoteResult(request $request)
 	{
-		$voteId = $request->id;
+		$voteId = $request['id'];
 		if(Vote::find($voteId)->show_result == 0)
         {
-            return "Voted successfully, but you cannot view the result now.";
+            return JsonData(['result' => 'Voted Successfully', 'show_result' => 'false']);
         }
-		return view('vote.result')->with('vote',Vote::Id($voteId));
+        return JsonData(Vote::find($voteId));
 	}
 
 	/**
