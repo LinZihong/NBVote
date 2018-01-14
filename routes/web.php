@@ -24,3 +24,5 @@ $router->group(['middleware' => 'checkIdentity', 'prefix' => 'user'], function (
 	$router->get('/', 'UserController@me');
 	$router->get('/log', 'UserController@actionLog');
 });
+
+$router->get('/testreq', 'ExampleController@testreq');

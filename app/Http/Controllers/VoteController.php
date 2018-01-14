@@ -59,7 +59,7 @@ class VoteController extends Controller
 	 */
 	public function showIndividualVote(Request $request)
 	{
-		$id = $request->id;
+		$id = $request['id'];
 		// return Vote::find($id)->with('questions', 'questions.options')->first();
         $vote = Vote::with('questions', 'questions.options')->find($id);
         $ticket = $request['ticket'];
@@ -90,7 +90,7 @@ class VoteController extends Controller
 		}
 		
 		if ($voteIsValid) {  // Safety First :)
-			switch ($request->type) {  // Start Dash!
+			switch ($request['type']) {  // Start Dash!
 				case 'ticket':
 					foreach ($answers as $answer) {
 						$modelAns = new Answer;
