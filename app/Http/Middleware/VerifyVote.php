@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Vote;
 use App\Ticket;
@@ -19,48 +20,48 @@ class VerifyVote
 	public function handle($request, Closure $next)
 	{
 		// general Checking
-		if (empty($request->ticket) && !Auth::check()) {
-			return redirect('/login')->withErrors(['warning' => __('login.login_required', [
-				'process' => 'vote'
-			]),]); // No ticket or user need to login to vote.
+        $ticketStr = $request->route()[2]['ticket'];
+        $voteId = $request->route()[2]['id'];//@TODO check if out-of-index error
+		if (empty($ticketStr) && !CheckLogin($request)) {
+            return JsonStatus('Need to login or a ticket.', 401);
 		}
 
-		if (empty($vote = Vote::find($request->id))) { //check if vote exists
-			return redirect('/error/custom')->withErrors(['warning' => __('vote.vote_no_found')]); // Vote No Found
+		if (empty($vote = Vote::find($voteId))) { //check if vote exists
+            return JsonStatus('Vote not found', 401);
 		}
 
 		if (strtotime($vote->ended_at) - strtotime('now') < 0) {
-			return redirect('/error/custom')->withErrors(['warning' => __('vote.vote_expired')]); // Vote Expired
+            return JsonStatus('Vote expired', 401);
 		}
 
 		if (strtotime($vote->started_at) - strtotime('now') > 0) {
-			return redirect('/error/custom')->withErrors(['warning' => __('vote.vote_not_started')]); // Vote not started
+		    return JsonStatus('Vote not started', 401);
 		}
 
 		// Categorize
 
 		// If user use ticket to vote, then go with this check
-		if ((!empty($ticket = Ticket::ticket($request->ticket))) && ($vote->type == 1 || $vote->type == 2)) {
+		if ((!empty($ticket = Ticket::ticket($ticketStr))) && ($vote->type == 1 || $vote->type == 2)) {
 			if ($ticket->active == 1) { // check if ticket is valid
 				if (!$ticket->isTicketUsed($vote->id)) {
 					$request->merge(['type' => 'ticket']); //将该请求归类到Ticket类型
 					return $next($request);
 				}
-				return redirect('/error/custom')->withErrors(['warning' => __('vote.ticket_is_used')]); // Ticket is used !
+                return JsonStatus('Ticket used', 401);
 			}
-			return redirect('/error/custom')->withErrors(['warning' => __('vote.ticket_invalid')]); // Ticket Not Valid !
+            return JsonStatus('Ticket invalid', 401);
 		}
 
 		// If user login to vote, then go with this check
-		if (Auth::check() && ($vote->type == 0 || $vote->type == 2)) {
-			$user = Auth::user();
+		if (CheckLogin($request) && ($vote->type == 0 || $vote->type == 2)) {
+			$user = CurrentUser($request);
 			if (!$user->isUserVoted($vote->id)) {
 				$request->merge(['type' => 'user']); //将该请求归类到User类型
 				return $next($request);
 			}
-			return redirect('/error/custom')->withErrors(['warning' => __('vote.user_has_voted')]); // User has voted !
+            return JsonStatus('User voted', 401);
 		}
 
-		return redirect('/error/custom')->withErrors(['warning' => __('vote.credential_error')]); // Credential invalid
+        return JsonStatus('Invalid vote credentials', 401);
 	}
 }

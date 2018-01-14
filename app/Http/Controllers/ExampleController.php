@@ -20,6 +20,6 @@ class ExampleController extends Controller
     public function testreq(Request $request)
     {
         $request->merge(['mes' => $request->ip()]);
-        return $request;
+        return $request->route()[2]['id'];
     }
 }
