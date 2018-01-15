@@ -17,8 +17,9 @@ class VerifyGroup
 	 */
 	public function handle($request, Closure $next)
 	{
-		if (empty($ticket = Ticket::ticket($request->ticket)) || $ticket->active != 1) {
+		if (empty($ticket = Ticket::ticket($request->route()[2]['ticket'])) || $ticket->active != 1) {
 			return redirect('/error/custom')->withErrors(['warning' => Lang::get('vote.ticket_invalid')]);
+			return JsonStatus('Ticket invalid', 401);
 		}
 		return $next($request);
 	}

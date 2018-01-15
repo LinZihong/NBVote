@@ -19,45 +19,42 @@ class VerifyResult
 	 */
 	public function handle($request, Closure $next)
 	{
-	    if($request->user->role == 'admin')
+	    if(CheckLogin($request) && CurrentUser($request)->role == 'admin')
         {
             return $next($request);
         }
 		// @TODO Please Check
-		if (empty($request->ticket) && !Auth::check()) {
-			return redirect('/login')->withErrors(['warning' => Lang::get('login.login_required', [
-				'process' => 'vote'
-			]),]); // No ticket or user need to login to vote.
+		if (empty($request->route()[2]['ticket']) && !CheckLogin($request)) {
+            return JsonStatus('Unauthorized.', 401);
 		}
 
-		if (empty($vote = Vote::find($request->id))) { //check if vote exists
-			return redirect('/error/custom')->withErrors(['warning' => Lang::get('vote.vote_no_found')]); // Vote No Found
+		if (empty($vote = Vote::find($request->route()[2]['id']))) { //check if vote exists
+            return JsonStatus('Vote not found', 401);
 		}
 
 		if ($vote->show_result != 1){
-//			return view('vote.thanks'); // Vote result set not shown
-            return "Voted Successfully, but results are not shown.";
+            return JsonStatus("Voted Successfully, but results are not shown.", 401);
 		}
 
-		if (!empty($ticket = Ticket::ticket($request->ticket)) && ($vote->type == 1 || $vote->type == 2)) {
+		if (!empty($ticket = Ticket::ticket($request->route()[2]['ticket'])) && ($vote->type == 1 || $vote->type == 2)) {
 			if ($ticket->active == 0){	
-				return redirect('/error/custom')->withErrors(['warning' => Lang::get('vote.ticket_invalid')]); // Ticket is not valid
+                return JsonStatus('Ticket invalid', 401);
 			}
 			if ($ticket->isTicketUsed($vote->id)) {
 				return $next($request);  // Ticket has used for this Vote !
 			}
-			return redirect('/error/custom')->withErrors(['warning' => Lang::get('vote.vote_first')]); // Ticket is not used !
+            return JsonStatus('Not voted yet!', 401);
 		}
 
 		// If user login to vote, then go with this check
-		if ($user = Auth::user() && ($vote->type == 0 || $vote->type == 2)) {
+		if ($user = CurrentUser($request) && ($vote->type == 0 || $vote->type == 2)) {
 			if ($user->isUserVoted($vote->id)) {
 				return $next($request);
 			}
-			return redirect('/error/custom')->withErrors(['warning' => Lang::get('vote.user_not_voted')]); // User has not voted !
+            return JsonStatus('Not voted yet!', 401);
 		}
 
-		return redirect('/error/custom')->withErrors(['warning' => Lang::get('vote.credential_error')]); // Credential invalid
+        return JsonStatus('Invalid credentials', 401);
 	}
   
 }
