@@ -34,7 +34,7 @@ class VoteController extends Controller
 	{
 		$votes = VoteGroup::with('votes')->orderBy('created_at', 'desc')->get();
 
-		return JsonData($votes);//@TODO eager load necessary relations
+		return JsonData($votes);
 	}
 
 	/**
@@ -45,7 +45,7 @@ class VoteController extends Controller
 	 */
 	public function showVoteGroup(Request $request)
 	{
-		$ticket = Ticket::ticket($request['ticket']);
+		$ticket = Ticket::where('string',$request['ticket'])->with('voteGroup.votes')->firstOrFail();
 
 		return JsonData($ticket);
 	}
@@ -61,7 +61,7 @@ class VoteController extends Controller
 	{
 		$id = $request['id'];
 		// return Vote::find($id)->with('questions', 'questions.options')->first();
-        $vote = Vote::with('questions', 'questions.options')->find($id);
+        $vote = Vote::with('questions.options')->find($id);
         $ticket = $request['ticket'];
         return JsonData(['vote' => $vote, 'ticket' => $ticket]);
 	}
@@ -172,7 +172,17 @@ class VoteController extends Controller
         {
             return JsonData(['result' => 'Voted Successfully', 'show_result' => 'false']);
         }
-        return JsonData(Vote::find($voteId));
+
+        $vote = Vote::with('questions.options')->find($voteId);
+		foreach($vote['questions'] as $question)
+        {
+            foreach($question['options'] as $option)
+            {
+                $option['count'] = count($option->answers);
+                $option['percent'] = round(($option->getTotalNumber()/$question->getTotalNumber())*100,2);
+            }
+        }
+        return JsonData($vote);
 	}
 
 	/**
