@@ -45,7 +45,7 @@ class VoteController extends Controller
 	 */
 	public function showVoteGroup(Request $request)
 	{
-		$ticket = Ticket::where('string',$request['ticket'])->with('voteGroup.votes')->firstOrFail();
+		$ticket = Ticket::where('string',$request->route()[2]['ticket'])->with('voteGroup.votes')->firstOrFail();
 
 		return JsonData($ticket);
 	}
@@ -59,10 +59,10 @@ class VoteController extends Controller
 	 */
 	public function showIndividualVote(Request $request)
 	{
-		$id = $request['id'];
+		$id = $request->route()[2]['id'];
 		// return Vote::find($id)->with('questions', 'questions.options')->first();
         $vote = Vote::with('questions.options')->find($id);
-        $ticket = $request['ticket'];
+        $ticket = $request->route()[2]['ticket'];
         return JsonData(['vote' => $vote, 'ticket' => $ticket]);
 	}
 
@@ -76,10 +76,10 @@ class VoteController extends Controller
 	public function voteHandler(Request $request)
 	{
 		// init
-		$voteId = $request['id'];
-		$ticket = Ticket::ticket($request['ticket']);
+		$voteId = $request->route()[2]['id'];
+		$ticket = Ticket::ticket($request->route()[2]['ticket']);
 		$answers = collect(json_decode($request['selected']));
-		$vote = Vote::find($request['id']);
+		$vote = Vote::find($voteId);
 		$voteIsValid = false;
 
 		if (!$this->checkIfAllFilled($answers, $vote)) { //并且所有的选项填完了
@@ -134,7 +134,7 @@ class VoteController extends Controller
         $option = $request['option_id'];
         $status = $request['status'];
         $time = $request['time'];
-        $ticket = $request['ticket'];
+        $ticket = $request->route()[2]['ticket'];
         if(empty($cached = OptionCache::where('option', $option)->where('ticket', $ticket)->first()))
         {
             OptionCache::create([
@@ -156,7 +156,7 @@ class VoteController extends Controller
 
     public function getCachedOptions(Request $request)
     {
-        return JsonData(OptionCache::where('ticket', $request['ticket'])->get());
+        return JsonData(OptionCache::where('ticket', $request->route()[2]['ticket'])->get());
     }
 
 	/**
@@ -167,7 +167,7 @@ class VoteController extends Controller
 	 */
 	public function showVoteResult(request $request)
 	{
-		$voteId = $request['id'];
+		$voteId = $request->route()[2]['id'];
 		if(Vote::find($voteId)->show_result == 0)
         {
             return JsonData(['result' => 'Voted Successfully', 'show_result' => 'false']);
