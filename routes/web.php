@@ -39,20 +39,20 @@ $router->group(['prefix' => 'vote'], function () use ($router) {
 
     $router->group(['middleware' => 'vote_result'], function () use ($router) {
         // 投票结果处理
-        $router->get('/id/{id}/ticket/{ticket}/result', 'VoteController@showVoteResult')->where(['id' => '[0-9]+']);
+        $router->get('/id/{id:[0-9]+}/ticket/{ticket}/result', 'VoteController@showVoteResult');
         // 投票结果结束
     });
 
     $router->group(['middleware' => 'vote'], function () use ($router) {
         // 投票处理认证
 
-        $router->post('/id/{id}/ticket/{ticket}', 'VoteController@voteHandler')->where(['id' => '[0-9]+']);
+        $router->post('/id/{id:[0-9]+}/ticket/{ticket}', 'VoteController@voteHandler');
 
         // 投票处理结束
     });
-    $router->get('/id/{id}/ticket/{ticket}', 'VoteController@showIndividualVote')->where(['id' => '[0-9]+']);
-    $router->get('/id/{id}/ticket/{ticket}/qr_cache', 'VoteController@cacheOptions')->where(['id' => '[0-9]+']);
-    $router->get('/id/{id}/ticket/{ticket}/get_qr_cache', 'VoteController@getCachedOptions')->where(['id' => '[0-9]+']);
+    $router->get('/id/{id:[0-9]+}/ticket/{ticket}', 'VoteController@showIndividualVote');
+    $router->get('/id/{id:[0-9]+}/ticket/{ticket}/qr_cache', 'VoteController@cacheOptions');
+    $router->get('/id/{id:[0-9]+}/ticket/{ticket}/get_qr_cache', 'VoteController@getCachedOptions');
 
 });
 
