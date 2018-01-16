@@ -24,6 +24,7 @@ class CreateVotesTable extends Migration
             $table->string('started_at');
             $table->string('ended_at');
             $table->string('vote_group_id');
+            $table->string('show_result');
             $table->timestamps();
         });
     }
