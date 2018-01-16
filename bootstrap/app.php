@@ -67,6 +67,9 @@ $app->middleware([
 $app->routeMiddleware([
 //     'auth' => App\Http\Middleware\Authenticate::class,
 	'checkIdentity' => App\Http\Middleware\CheckIdentity::class,
+    'vote_group' => \App\Http\Middleware\VerifyGroup::class,
+    'vote_result' => \App\Http\Middleware\VerifyResult::class,
+    'vote' => \App\Http\Middleware\VerifyVote::class
 ]);
 
 /*
