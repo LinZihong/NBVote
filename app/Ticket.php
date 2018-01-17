@@ -42,7 +42,7 @@ class Ticket extends Model
 	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
 	 */
-	public function answers()
+	public function answers() //@TODO fuck this does not work for unknown reasons
 	{
 		return $this->morphMany('App\Answer', 'source');
 	}
