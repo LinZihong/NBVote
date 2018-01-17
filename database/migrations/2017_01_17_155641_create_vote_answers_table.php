@@ -19,6 +19,8 @@ class CreateVoteAnswersTable extends Migration
             $table->string('user_id')->default('0');
             $table->string('option_id')->nullable();
             $table->string('content')->nullable();
+            $table->string('source_type');
+            $table->integer('source_id');
             $table->timestamps();
         });
     }
