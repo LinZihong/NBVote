@@ -78,6 +78,10 @@ class VoteController extends Controller
 		// init
 		$voteId = $request->route()[2]['id'];
 		$ticket = Ticket::ticket($request->route()[2]['ticket']);
+        if(!array_key_exists('selected', $request))
+        {
+            return JsonStatus('Invalid form', 401);
+        }
 		$answers = collect(json_decode($request['selected']));
 		$vote = Vote::find($voteId);
 		$voteIsValid = false;
@@ -96,7 +100,7 @@ class VoteController extends Controller
 						$modelAns = new Answer;
 						$modelAns->option_id = $answer;
 						$modelAns->source_id = $ticket->id;
-						$modelAns->source_type = 'ticket';
+						$modelAns->source_type = 'App\Ticket';
 						$modelAns->saveOrFail();
 					}
 					event(new UpdateModelIPAddress('ticket', $ticket->id, 'vote.ticket', $request->ip()));
@@ -109,7 +113,7 @@ class VoteController extends Controller
 						$modelAns = new Answer;
 						$modelAns->option_id = $answer;
 						$modelAns->source_id = $userId;
-						$modelAns->source_type = 'user';
+						$modelAns->source_type = 'App\User';
 						$modelAns->saveOrFail();
 					}
 
@@ -168,10 +172,6 @@ class VoteController extends Controller
 	public function showVoteResult(request $request)
 	{
 		$voteId = $request->route()[2]['id'];
-		if(Vote::find($voteId)->show_result == 0)
-        {
-            return JsonData(['result' => 'Voted Successfully', 'show_result' => 'false']);
-        }
 
         $vote = Vote::with('questions.options')->find($voteId);
 		foreach($vote['questions'] as $question)

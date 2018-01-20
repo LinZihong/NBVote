@@ -27,9 +27,9 @@ $router->group(['middleware' => 'checkIdentity', 'prefix' => 'user'], function (
 
 $router->group(['prefix' => 'vote'], function () use ($router) {
 
-    $router->get('/rrr_secret/1122233', function() {
-        return view('vote.result')->with('vote',Vote::find(2));
-    });
+//    $router->get('/rrr_secret/1122233', function() {
+//        return view('vote.result')->with('vote',Vote::find(2));
+//    });
 
     $router->group(['middleware' => 'vote_group'], function () use ($router) {
         // 访客 Ticket 验证

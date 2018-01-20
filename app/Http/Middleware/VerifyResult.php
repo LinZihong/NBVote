@@ -32,10 +32,6 @@ class VerifyResult
             return JsonStatus('Vote not found', 401);
 		}
 
-		if ($vote->show_result != 1){
-            return JsonStatus("Voted Successfully, but results are not shown.", 401);
-		}
-
 		if (!empty($ticket = Ticket::ticket($request->route()[2]['ticket'])) && ($vote->type == 1 || $vote->type == 2)) {
 			if ($ticket->active == 0){	
                 return JsonStatus('Ticket invalid', 401);
@@ -46,7 +42,11 @@ class VerifyResult
             return JsonStatus('Not voted yet!', 401);
 		}
 
-		// If user login to vote, then go with this check
+        if ($vote->show_result != 1){
+            return JsonStatus("Results are not shown.", 401);
+        }
+
+        // If user login to vote, then go with this check
 		if ($user = CurrentUser($request) && ($vote->type == 0 || $vote->type == 2)) {
 			if ($user->isUserVoted($vote->id)) {
 				return $next($request);
