@@ -9,10 +9,8 @@
         "laravel/lumen-framework": "5.5.*",
         "vlucas/phpdotenv": "~2.2",
         "barryvdh/laravel-cors": "^0.11.0",
-        "darkaonline/swagger-lume": "5.5.*",
         "flipbox/lumen-generator": "^5.5",
         "predis/predis": "^1.1",
-        "illuminate/redis": "^5.5",
         "neverbehave/lumen-helpers": "v2.2"
     },
     "require-dev": {
