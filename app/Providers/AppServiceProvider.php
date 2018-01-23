@@ -13,13 +13,14 @@ class AppServiceProvider extends ServiceProvider
      * @return void
      */
 
-//    public function boot()
-//    {
+    public function boot()
+    {
 //        Relation::morphMap([
 //            'ticket' => 'App\Ticket',
 //            'user' => 'App\User'
 //        ]);
-//    }
+        Schema::defaultStringLength(191);
+    }
 // Just cannot get it to work... changing the source_type column now...
 
     public function register()
