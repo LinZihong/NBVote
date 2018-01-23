@@ -46,7 +46,7 @@ class VoteController extends Controller
 	public function showVoteGroup(Request $request)
 	{
 		$ticket = Ticket::where('string',$request->route()[2]['ticket'])->with('voteGroup.votes')->firstOrFail();
-		foreach($ticket['votes'] as $vote)
+		foreach($ticket['voteGroup']['votes'] as $vote)
         {
             $vote['is_voted'] = $ticket->isTicketUsed($vote->id);
             $vote['times'] = count($vote->votedIds());
