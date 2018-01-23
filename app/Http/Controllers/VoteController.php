@@ -186,6 +186,7 @@ class VoteController extends Controller
             {
                 $option['count'] = count($option->answers);
                 $option['percent'] = round(($option->getTotalNumber()/$question->getTotalNumber())*100,2);
+                unset($option['answers']);
             }
         }
         return JsonData($vote);
