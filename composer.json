@@ -13,7 +13,7 @@
         "flipbox/lumen-generator": "^5.5",
         "predis/predis": "^1.1",
         "illuminate/redis": "^5.5",
-        "neverbehave/lumen-helpers": "v2.2",
+        "neverbehave/lumen-helpers": "v2.2"
 //        "doctrine/dbal": "^2.6",
 //        "illuminate/mail": "^5.5",
 //        "Illuminate/Events": "^5.5"
