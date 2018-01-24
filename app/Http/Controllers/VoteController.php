@@ -45,12 +45,11 @@ class VoteController extends Controller
 	 */
 	public function showVoteGroup(Request $request)
 	{
-		$ticket = Ticket::where('string',$request->route()[2]['ticket'])->with('voteGroup.votes')->firstOrFail();
-		foreach($ticket['voteGroup']['votes'] as $vote)
-        {
-            $vote['is_voted'] = $ticket->isTicketUsed($vote->id);
-            $vote['times'] = count($vote->votedIds());
-        }
+		$ticket = Ticket::where('string', $request->route()[2]['ticket'])->with('voteGroup.votes')->firstOrFail();
+		foreach ($ticket['voteGroup']['votes'] as $vote) {
+			$vote['is_voted'] = $ticket->isTicketUsed($vote->id);
+			$vote['times'] = count($vote->votedIds());
+		}
 
 		return JsonData($ticket);
 	}
@@ -66,11 +65,12 @@ class VoteController extends Controller
 	{
 		$id = $request->route()[2]['id'];
 		// return Vote::find($id)->with('questions', 'questions.options')->first();
-        $vote = Vote::with('questions.options')->find($id);
-        $ticket = $request->route()[2]['ticket'];
-        $vote['times'] = count($vote->votedIds());
-        $vote['is_voted'] = Ticket::ticket($ticket)->isTicketUsed($id) ? 1 : 0;
-        return JsonData(['vote' => $vote, 'ticket' => $ticket]);
+		$vote = Vote::with('questions.options')->find($id);
+		$ticket = $request->route()[2]['ticket'];
+		$vote['times'] = count($vote->votedIds());
+		$vote['is_voted'] = Ticket::ticket($ticket)->isTicketUsed($id) ? 1 : 0;
+
+		return JsonData(['vote' => $vote, 'ticket' => $ticket]);
 	}
 
 	/**
@@ -85,11 +85,10 @@ class VoteController extends Controller
 		// init
 		$voteId = $request->route()[2]['id'];
 		$ticket = Ticket::ticket($request->route()[2]['ticket']);
-        if(!array_key_exists('selected', $request))
-        {
-            return JsonStatus('Invalid form', 401);
-        }
-		$answers = collect(json_decode($request['selected']));
+		if (!$request->has('selected')) {
+			return JsonStatus('Invalid form', 401);
+		}
+		$answers = collect(json_decode($request['selected'], true));
 		$vote = Vote::find($voteId);
 		$voteIsValid = false;
 
@@ -99,7 +98,7 @@ class VoteController extends Controller
 		if ($this->checkIfNoRepeatingOptions($answers) && $this->checkIfOptionsFilledMatch($answers, $vote)) {
 			$voteIsValid = true;
 		}
-		
+
 		if ($voteIsValid) {  // Safety First :)
 			switch ($request['type']) {  // Start Dash!
 				case 'ticket':
@@ -127,48 +126,44 @@ class VoteController extends Controller
 //					return redirect('/vote/id/' . $voteId . '/result/');
 					break;
 			}
-            if($vote->show_result == 0)
-            {
-                return JsonData(['result' => 'Voted Successfully', 'show_result' => 'false']);
-            }
-            else
-            {
-                return JsonData(['result' => 'Voted Successfully', 'show_result' => 'true']);//Negotiate frontend url rules
-            }
+			if ($vote->show_result == 0) {
+				return JsonData(['result' => 'Voted Successfully', 'show_result' => 'false']);
+			} else {
+				return JsonData(['result' => 'Voted Successfully', 'show_result' => 'true']);//Negotiate frontend url rules
+			}
 		} else {
 			return JsonStatus('vote.checksum_fail', 401);
 		}
 	}
 
 	public function cacheOptions(Request $request)
-    {
-        $option = $request['option_id'];
-        $status = $request['status'];
-        $time = $request['time'];
-        $ticket = $request->route()[2]['ticket'];
-        if(empty($cached = OptionCache::where('option', $option)->where('ticket', $ticket)->first()))
-        {
-            OptionCache::create([
-                'option' => $option,
-                'status' => $status,
-                'ticket' => $ticket,
-                'update_time' => $time
-            ]);
-            return JsonData('Saved!');
-        }
-        else if($time > $cached->update_time)
-        {
-            $cached->update_time = $time;
-            $cached->status = $status;
-            $cached->save();
-        }
-        return JsonData('Cached!');
-    }
+	{
+		$option = $request['option_id'];
+		$status = $request['status'];
+		$time = $request['time'];
+		$ticket = $request->route()[2]['ticket'];
+		if (empty($cached = OptionCache::where('option', $option)->where('ticket', $ticket)->first())) {
+			OptionCache::create([
+				'option'      => $option,
+				'status'      => $status,
+				'ticket'      => $ticket,
+				'update_time' => $time,
+			]);
 
-    public function getCachedOptions(Request $request)
-    {
-        return JsonData(OptionCache::where('ticket', $request->route()[2]['ticket'])->get());
-    }
+			return JsonData('Saved!');
+		} else if ($time > $cached->update_time) {
+			$cached->update_time = $time;
+			$cached->status = $status;
+			$cached->save();
+		}
+
+		return JsonData('Cached!');
+	}
+
+	public function getCachedOptions(Request $request)
+	{
+		return JsonData(OptionCache::where('ticket', $request->route()[2]['ticket'])->get());
+	}
 
 	/**
 	 * Show Vote Result :)
@@ -180,17 +175,16 @@ class VoteController extends Controller
 	{
 		$voteId = $request->route()[2]['id'];
 
-        $vote = Vote::with('questions.options')->find($voteId);
-		foreach($vote['questions'] as $question)
-        {
-            foreach($question['options'] as $option)
-            {
-                $option['count'] = count($option->answers);
-                $option['percent'] = round(($option->getTotalNumber()/$question->getTotalNumber())*100,2);
-                unset($option['answers']);
-            }
-        }
-        return JsonData($vote);
+		$vote = Vote::with('questions.options')->find($voteId);
+		foreach ($vote['questions'] as $question) {
+			foreach ($question['options'] as $option) {
+				$option['count'] = count($option->answers);
+				$option['percent'] = round(($option->getTotalNumber() / $question->getTotalNumber()) * 100, 2);
+				unset($option['answers']);
+			}
+		}
+
+		return JsonData($vote);
 	}
 
 	/**
@@ -223,6 +217,7 @@ class VoteController extends Controller
 		if ($required->diff($filled)->isEmpty()) {
 			return true;
 		}
+
 		return false;
 	}
 
@@ -241,12 +236,12 @@ class VoteController extends Controller
 //				return false;
 //			} // illegal answers :( # of options for a specific question is not match
 //		}); 垃圾玩意出了啥毛病
-        foreach ($vote->questions as $question)
-        {
-            if ($optionsFilled[$question->id] != $question->range) {
+		foreach ($vote->questions as $question) {
+			if ($optionsFilled[$question->id] != $question->range) {
 				return false;
 			} // illegal answers :( # of options for a specific question is not match
-        }
+		}
+
 		return true;
 	}
 }
