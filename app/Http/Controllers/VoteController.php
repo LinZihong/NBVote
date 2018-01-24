@@ -69,6 +69,7 @@ class VoteController extends Controller
         $vote = Vote::with('questions.options')->find($id);
         $ticket = $request->route()[2]['ticket'];
         $vote['times'] = count($vote->votedIds());
+        $vote['is_voted'] = Ticket::ticket($ticket)->isTicketUsed($id);
         return JsonData(['vote' => $vote, 'ticket' => $ticket]);
 	}
 
