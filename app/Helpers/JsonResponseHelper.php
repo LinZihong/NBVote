@@ -12,7 +12,7 @@ if (!function_exists('JsonStatus')) {
 	function JsonStatus($message = 'success', $status = 200)
 	{
 		return Response()->json([
-			'status'  => $status,
+			'status'  => (String)$status,
 			'message' => $message,
 		]);
 	}
