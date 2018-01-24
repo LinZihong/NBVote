@@ -15,6 +15,6 @@ if (!function_exists('JsonData')) {
 			'status'  => $status,
 			'message' => $message,
 			'data'    => $data,
-		]);
+		], $status, [], JSON_NUMERIC_CHECK);
 	}
 }
