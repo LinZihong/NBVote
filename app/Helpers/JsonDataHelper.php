@@ -22,7 +22,7 @@ if (!function_exists('JsonData')) {
 	function JSON_NUMERIC_STRING($array)
 	{
 		foreach ($array as $key => &$value) {
-			if (method_exists($value, 'toArray')) {
+			if (method_exists($value, 'toArray') && !is_string($value)) {
 				$value = $value->toArray();
 			}
 			if (is_array($value)) {
