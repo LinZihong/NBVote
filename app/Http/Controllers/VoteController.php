@@ -86,7 +86,7 @@ class VoteController extends Controller
 		$voteId = $request->route()[2]['id'];
 		$ticket = Ticket::ticket($request->route()[2]['ticket']);
 		$answers = collect(json_decode($request->getContent(),true)['selected']);
-		return $answers;
+//		return $answers;
 		if ($answers->isEmpty()) {
 			return JsonStatus('Invalid form', 401);
 		}
