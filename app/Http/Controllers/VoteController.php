@@ -47,7 +47,7 @@ class VoteController extends Controller
 	{
 		$ticket = Ticket::where('string', $request->route()[2]['ticket'])->with('voteGroup.votes')->firstOrFail();
 		foreach ($ticket['voteGroup']['votes'] as $vote) {
-			$vote['is_voted'] = $ticket->isTicketUsed($vote->id);
+			$vote['is_voted'] = $ticket->isTicketUsed($vote->id) ? 1 : 0;
 			$vote['times'] = count($vote->votedIds());
 		}
 
