@@ -47,7 +47,7 @@ class VoteController extends Controller
 	{
 		$ticket = Ticket::where('string', $request->route()[2]['ticket'])->with('voteGroup.votes')->firstOrFail();
 		foreach ($ticket['voteGroup']['votes'] as $vote) {
-			$vote['is_voted'] = $ticket->isTicketUsed($vote->id) ? 1 : 0;
+			$vote['is_voted'] = $ticket->isTicketUsed($vote->id) ? '1' : '0';
 			$vote['times'] = count($vote->votedIds());
 		}
 
@@ -68,7 +68,7 @@ class VoteController extends Controller
 		$vote = Vote::with('questions.options')->find($id);
 		$ticket = $request->route()[2]['ticket'];
 		$vote['times'] = count($vote->votedIds());
-		$vote['is_voted'] = Ticket::ticket($ticket)->isTicketUsed($id) ? 1 : 0;
+		$vote['is_voted'] = Ticket::ticket($ticket)->isTicketUsed($id) ? '1' : '0';
 
 		return JsonData(['vote' => $vote, 'ticket' => $ticket]);
 	}
