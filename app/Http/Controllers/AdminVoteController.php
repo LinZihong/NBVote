@@ -28,7 +28,7 @@ class AdminVoteController extends Controller
 
     function operateTickets(Request $request)
     {
-        $op = $request->route()[2]['route'];
+        $op = $request->route()[2]['operation'];
         $from = $request->route()[2]['from'];
         $to = $request->route()[2]['to'];
         for ($i = $from; $i <= $to; $i++) {
