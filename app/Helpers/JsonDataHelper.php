@@ -21,6 +21,9 @@ if (!function_exists('JsonData')) {
 
 	function JSON_NUMERIC_STRING($array)
 	{
+        if (method_exists($array, 'toArray')) {
+            $array = $array->toArray();
+        }
 		foreach ($array as $key => $value) {
 			if (method_exists($value, 'toArray')) {
 				$array[$key] = $value->toArray();
