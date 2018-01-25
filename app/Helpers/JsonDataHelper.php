@@ -25,7 +25,7 @@ if (!function_exists('JsonData')) {
             $array = $array->toArray();
         }
 		foreach ($array as $key => $value) {
-			if (method_exists($value, 'toArray')) {
+			if (method_exists($value, 'toArray') && !is_string($value)) {
 				$array[$key] = $value->toArray();
 			}
 			if (is_array($value)) {
