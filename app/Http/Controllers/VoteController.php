@@ -181,7 +181,7 @@ class VoteController extends Controller
 			foreach ($question['options'] as $option) {
 				$option['count'] = count($option->answers);
 				$option['percent'] = round(($option->getTotalNumber() / $question->getTotalNumber()) * 100, 2);
-				unset($option['answers']);
+				$option['answers'] = 'You know this not';
 			}
 		}
 
