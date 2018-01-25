@@ -21,12 +21,12 @@ if (!function_exists('JsonData')) {
 
 	function JSON_NUMERIC_STRING($array)
 	{
-		foreach ($array as $key => &$value) {
+		foreach ($array as $key => $value) {
 			if (method_exists($value, 'toArray')) {
-				$value = $value->toArray();
+				$array[$key] = $value->toArray();
 			}
 			if (is_array($value)) {
-				$value = JSON_NUMERIC_STRING($value);
+				$array[$key] = JSON_NUMERIC_STRING($value);
 			} elseif (is_numeric($value)) {
 				$array[$key] = strval($value);
 			}
