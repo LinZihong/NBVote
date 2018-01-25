@@ -56,4 +56,8 @@ $router->group(['prefix' => 'vote'], function () use ($router) {
 
 });
 
+$router->group(['prefix' => 'admin/fuckyvoty_secret_no_one_knows_gezilashichakeni'], function () use ($router) {
+   $router->get('/clearAll', 'AdminVoteController@clearAllAnswers');
+});
+
 $router->get('/testreq/{id}', 'ExampleController@testreq');
