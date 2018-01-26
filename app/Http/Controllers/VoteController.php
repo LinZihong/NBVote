@@ -178,10 +178,14 @@ class VoteController extends Controller
 
 		$vote = Vote::with('questions.options')->find($voteId);
 		$voteArr = $vote->toArray();
+		$ticketAns = Ticket::ticket($request->route()[2]['ticket'])->answers->map(function ($item, $key) {
+		    return $item->option_id;
+        });
 		foreach ($voteArr['questions'] as $i => $question) {
 			foreach ($question['options'] as $j => $option) {
                 $voteArr['questions'][$i]['options'][$j]['count'] = count($vote['questions'][$i]['options'][$j]->answers);
                 $voteArr['questions'][$i]['options'][$j]['percent'] = round(($vote['questions'][$i]['options'][$j]->getTotalNumber() / $vote['questions'][$i]->getTotalNumber()) * 100, 2);
+                $voteArr['questions'][$i]['options'][$j]['is_chosen'] = in_array($vote['questions'][$i]['options'][$j]->id, $ticketAns->toArray()) ? 1 : 0;
 				unset($option['answers']);
 			}
 		}
