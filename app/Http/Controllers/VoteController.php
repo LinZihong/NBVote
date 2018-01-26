@@ -243,7 +243,7 @@ class VoteController extends Controller
 //			} // illegal answers :( # of options for a specific question is not match
 //		}); 垃圾玩意出了啥毛病
 		foreach ($vote->questions as $question) {
-			if ($optionsFilled[$question->id] != $question->range) {
+			if ($optionsFilled[$question->id] > $question->range) {
 				return false;
 			} // illegal answers :( # of options for a specific question is not match
 		}
