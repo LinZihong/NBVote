@@ -178,10 +178,11 @@ class VoteController extends Controller
 
 		$vote = Vote::with('questions.options')->find($voteId);
 		foreach ($vote['questions'] as $question) {
-			foreach ($question['options'] as $option) {
+			foreach ($question['options'] as &$option) {
 				$option['count'] = count($option->answers);
 				$option['percent'] = round(($option->getTotalNumber() / $question->getTotalNumber()) * 100, 2);
 				$option['answers'] = 'You know this not';
+				unset($option['answers']);
 			}
 		}
 
