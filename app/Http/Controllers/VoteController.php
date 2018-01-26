@@ -182,7 +182,7 @@ class VoteController extends Controller
 				$option['count'] = count($option->answers);
 				$option['percent'] = round(($option->getTotalNumber() / $question->getTotalNumber()) * 100, 2);
 				$option['answers'] = 'You know this not';
-				unset($option['answers']);
+				unset($option->answers);
 			}
 		}
 
