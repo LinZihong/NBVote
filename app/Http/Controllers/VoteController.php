@@ -177,16 +177,16 @@ class VoteController extends Controller
 		$voteId = $request->route()[2]['id'];
 
 		$vote = Vote::with('questions.options')->find($voteId);
-		foreach ($vote['questions'] as &$question) {
-			foreach ($question['options'] as &$option) {
-				$option['count'] = count($option->answers);
-				$option['percent'] = round(($option->getTotalNumber() / $question->getTotalNumber()) * 100, 2);
-				$option['answers'] = 'You know this not';
-				unset($option->answers);
+		$voteArr = $vote->toArray();
+		foreach ($voteArr['questions'] as $i => $question) {
+			foreach ($question['options'] as $j => $option) {
+                $voteArr['questions'][$i]['options'][$j]['count'] = count($vote['questions'][$i]['options'][$j]->answers);
+                $voteArr['questions'][$i]['options'][$j]['percent'] = round(($vote['questions'][$i]['options'][$j]->getTotalNumber() / $vote['questions'][$i]->getTotalNumber()) * 100, 2);
+				unset($option['answers']);
 			}
 		}
 
-		return JsonData($vote);
+		return JsonData($voteArr);
 	}
 
 	/**
