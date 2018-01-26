@@ -22,4 +22,9 @@ class ExampleController extends Controller
         $request->merge(['mes' => $request->ip()]);
         return $request->route()[2]['id'];
     }
+
+    public function clocky()
+    {
+        return strtotime('now');
+    }
 }

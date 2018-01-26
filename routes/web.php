@@ -63,3 +63,4 @@ $router->group(['prefix' => 'admin/fuckyvoty_secret_no_one_knows_gezilashichaken
 });
 
 $router->get('/testreq/{id}', 'ExampleController@testreq');
+$router->get('/clocky', 'ExampleController@clocky');
