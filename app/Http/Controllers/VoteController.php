@@ -177,7 +177,7 @@ class VoteController extends Controller
 		$voteId = $request->route()[2]['id'];
 
 		$vote = Vote::with('questions.options')->find($voteId);
-		foreach ($vote['questions'] as $question) {
+		foreach ($vote['questions'] as &$question) {
 			foreach ($question['options'] as &$option) {
 				$option['count'] = count($option->answers);
 				$option['percent'] = round(($option->getTotalNumber() / $question->getTotalNumber()) * 100, 2);
