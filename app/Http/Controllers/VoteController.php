@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Answer;
 
 use App\Events\UpdateModelIPAddress;
+use App\MicOptionCache;
 use App\OptionCache;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
@@ -72,7 +73,7 @@ class VoteController extends Controller
 		$ticket = $request->route()[2]['ticket'];
 		$vote['times'] = count($vote->votedIds());
 		$vote['is_voted'] = Ticket::ticket($ticket)->isTicketUsed($id) ? '1' : '0';
-		$vote['has_selected'] = $this->getCachedOptions($ticket);
+		$vote['has_selected'] = $this->getCachedOptions($ticket, $id);
 
 		return JsonData(['vote' => $vote, 'ticket' => $ticket]);
 	}
@@ -144,19 +145,28 @@ class VoteController extends Controller
 	public function cacheOptions(Request $request)
 	{
 		$ticket = $request->route()[2]['ticket'];
+		$vote_id = $request->route()[2]['id'];
 		$answers = json_decode($request->getContent(), true)['selected'];
-		Cache::forever($this->VoteCachePrefix . $ticket, $answers); // minutes
+		if(empty($cached = MicOptionCache::where('ticket', $ticket)->where('vote_id', $vote_id)->first()))
+        {
+            MicOptionCache::create([
+               'vote_id' => $vote_id,
+               'ticket_string' => $ticket,
+               'options' => $answers
+            ]);
+        }
+        else
+        {
+            $cached->options = $answers;
+            $cached->save();
+        }
 
 		return JsonStatus('Cached!');
 	}
 
-	protected function getCachedOptions($ticket)
+	protected function getCachedOptions($ticket, $id)
 	{
-		if (!empty($cache = Cache::get($this->VoteCachePrefix . $ticket))) {
-			return $cache;
-		}
-
-		return [];
+		return MicOptionCache::where('ticket', $ticket)->where('vote_id', $id)->first();
 	}
 
 	/**
