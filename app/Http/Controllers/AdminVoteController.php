@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Answer;
+use App\MicOptionCache;
 use App\Ticket;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,9 @@ class AdminVoteController extends Controller
     function clearAllAnswers(Request $request)
     {
         Answer::all()->each(function ($item, $key) {
+            $item->delete();
+        });
+        MicOptionCache::all()->each(function ($item, $key) {
             $item->delete();
         });
         return JsonStatus('Done');
