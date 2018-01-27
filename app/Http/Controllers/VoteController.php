@@ -6,6 +6,7 @@ use App\Answer;
 
 use App\Events\UpdateModelIPAddress;
 use App\OptionCache;
+use Carbon\Carbon;
 use Illuminate\Http\Response;
 use App\VoteGroup;
 use Illuminate\Http\Request;
@@ -144,7 +145,7 @@ class VoteController extends Controller
 	{
 		$ticket = $request->route()[2]['ticket'];
 		$answers = json_decode($request->getContent(), true)['selected'];
-		Cache::put($this->VoteCachePrefix . $ticket, $answers, 3600); // minutes
+		Cache::put($this->VoteCachePrefix . $ticket, $answers, Carbon::now()->addMinutes(1440)); // minutes
 
 		return JsonStatus('Cached!');
 	}
