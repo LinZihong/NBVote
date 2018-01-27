@@ -145,7 +145,7 @@ class VoteController extends Controller
 	{
 		$ticket = $request->route()[2]['ticket'];
 		$answers = json_decode($request->getContent(), true)['selected'];
-		Cache::put($this->VoteCachePrefix . $ticket, $answers, Carbon::now()->addMinutes(1440)); // minutes
+		Cache::forever($this->VoteCachePrefix . $ticket, $answers); // minutes
 
 		return JsonStatus('Cached!');
 	}
