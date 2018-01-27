@@ -152,7 +152,7 @@ class VoteController extends Controller
 	protected function getCachedOptions($ticket)
 	{
 		if (!empty($cache = Cache::get($this->VoteCachePrefix . $ticket))) {
-			return json_decode($cache, true);
+			return $cache;
 		}
 
 		return [];
