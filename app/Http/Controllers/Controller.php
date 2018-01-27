@@ -10,5 +10,6 @@ class Controller extends BaseController
 	public $loginLockPrefix = 'UserLoginLocked-';
 	public $loginTokenPrefix = 'UserToken-';
 	public $UserResetLockPrefix = 'UserResetTimes-';
+	public $VoteCachePrefix = 'VoteCache-';
 
 }
