@@ -47,7 +47,7 @@ $router->group(['prefix' => 'vote'], function () use ($router) {
         // 投票处理结束
     });
     $router->get('/id/{id:[0-9]+}/ticket/{ticket}', 'VoteController@showIndividualVote');
-    $router->get('/id/{id:[0-9]+}/ticket/{ticket}/cache', 'VoteController@cacheOptions');
+    $router->post('/id/{id:[0-9]+}/ticket/{ticket}/cache', 'VoteController@cacheOptions');
 
 });
 
