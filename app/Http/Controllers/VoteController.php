@@ -166,7 +166,11 @@ class VoteController extends Controller
 
 	protected function getCachedOptions($ticket, $id)
 	{
-		return MicOptionCache::where('ticket_string', $ticket)->where('vote_id', $id)->first()->options;
+		$cached = MicOptionCache::where('ticket_string', $ticket)->where('vote_id', $id)->first();
+		if(empty($cached))
+		    return [];
+		else
+		    return $cached->options;
 	}
 
 	/**
