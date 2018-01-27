@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Cache;
 
 class VoteController extends Controller
 {
-
 	/**
 	 * VoteController constructor.
 	 */
@@ -48,12 +47,13 @@ class VoteController extends Controller
 	public function showVoteGroup(Request $request)
 	{
 		$ticket = Ticket::where('string', $request->route()[2]['ticket'])->with('voteGroup.votes')->firstOrFail();
-		foreach ($ticket['voteGroup']['votes'] as $vote) {
-			$vote['is_voted'] = $ticket->isTicketUsed($vote->id) ? '1' : '0';
-			$vote['times'] = count($vote->votedIds());
+		$ticketArr = $ticket->toArray();
+		foreach ($ticketArr['vote_group']['votes'] as $index => &$vote) {
+			$vote['is_voted'] = $ticket->isTicketUsed($vote['id']) ? '1' : '0';
+			$vote['times'] = count($ticket->voteGroup->votes[$index]->votedIds());
 		}
 
-		return JsonData($ticket);
+		return JsonData($ticketArr);
 	}
 
 	/**
