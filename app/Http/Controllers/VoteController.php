@@ -13,6 +13,7 @@ use App\Ticket;
 use App\Vote;
 use App\Option;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Cache;
 
 
 class VoteController extends Controller
