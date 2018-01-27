@@ -88,13 +88,13 @@ class VoteController extends Controller
 		$answers = collect(json_decode($request->getContent(),true)['selected']);
 //		return $answers;
 		if ($answers->isEmpty()) {
-			return JsonStatus('Invalid form', 401);
+			return JsonStatus('非法表单', 401);
 		}
 		$vote = Vote::find($voteId);
 		$voteIsValid = false;
 
 		if (!$this->checkIfAllFilled($answers, $vote)) { //并且所有的选项填完了
-			return JsonStatus('vote.option_left_not_filled', 401);
+			return JsonStatus('有题目未填', 401);
 		}
 		if ($this->checkIfNoRepeatingOptions($answers) && $this->checkIfOptionsFilledMatch($answers, $vote)) {
 			$voteIsValid = true;
@@ -133,7 +133,7 @@ class VoteController extends Controller
 				return JsonData(['result' => 'Voted Successfully', 'show_result' => 'true']);//Negotiate frontend url rules
 			}
 		} else {
-			return JsonStatus('vote.checksum_fail', 401);
+			return JsonStatus('提交的数据不合法', 401);
 		}
 	}
 

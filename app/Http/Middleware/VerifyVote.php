@@ -27,15 +27,15 @@ class VerifyVote
 		}
 
 		if (empty($vote = Vote::find($voteId))) { //check if vote exists
-            return JsonStatus('Vote not found', 401);
+            return JsonStatus('您似乎来到了投票的荒原...这里什么也没有', 401);
 		}
 
 		if (strtotime($vote->ended_at) - strtotime('now') < 0) {
-            return JsonStatus('Vote expired', 401);
+            return JsonStatus('该投票已结束啦', 401);
 		}
 
 		if (strtotime($vote->started_at) - strtotime('now') > 0) {
-		    return JsonStatus('Vote not started', 401);
+		    return JsonStatus('该投票尚未开始哦', 401);
 		}
 
 		// Categorize
@@ -47,9 +47,9 @@ class VerifyVote
 					$request->merge(['type' => 'ticket']); //将该请求归类到Ticket类型
 					return $next($request);
 				}
-                return JsonStatus('Ticket used', 401);
+                return JsonStatus('该票卷已经投过这个投票啦', 401);
 			}
-            return JsonStatus('Ticket invalid', 401);
+            return JsonStatus('该票卷无效', 401);
 		}
 
 		// If user login to vote, then go with this check
@@ -62,6 +62,6 @@ class VerifyVote
             return JsonStatus('User voted', 401);
 		}
 
-        return JsonStatus('Invalid vote credentials', 401);
+        return JsonStatus('票据验证未通过...', 401);
 	}
 }

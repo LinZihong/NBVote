@@ -18,7 +18,7 @@ class VerifyGroup
 	public function handle($request, Closure $next)
 	{
 		if (empty($ticket = Ticket::ticket($request->route()[2]['ticket'])) || $ticket->active != 1) {
-			return JsonStatus('Ticket invalid', 401);
+			return JsonStatus('我们似乎不认识这张票...', 401);
 		}
 		return $next($request);
 	}
