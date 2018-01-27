@@ -147,7 +147,7 @@ class VoteController extends Controller
 		$ticket = $request->route()[2]['ticket'];
 		$vote_id = $request->route()[2]['id'];
 		$answers = json_decode($request->getContent(), true)['selected'];
-		if(empty($cached = MicOptionCache::where('ticket', $ticket)->where('vote_id', $vote_id)->first()))
+		if(empty($cached = MicOptionCache::where('ticket_string', $ticket)->where('vote_id', $vote_id)->first()))
         {
             MicOptionCache::create([
                'vote_id' => $vote_id,
