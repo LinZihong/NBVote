@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Lang;
 class VoteController extends Controller
 {
 
-	protected $VOTE
+	protected $VOTE;
 	/**
 	 * VoteController constructor.
 	 */
