@@ -146,7 +146,7 @@ class VoteController extends Controller
 		$answers = json_decode($request->getContent(), true)['selected'];
 		Cache::put($this->VoteCachePrefix . $ticket, $answers, 3600); // minutes
 
-		return JsonData('Cached!');
+		return JsonStatus('Cached!');
 	}
 
 	protected function getCachedOptions($ticket)
