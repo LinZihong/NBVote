@@ -27,11 +27,7 @@ $router->group(['middleware' => 'checkIdentity', 'prefix' => 'user'], function (
 
 $router->group(['prefix' => 'vote'], function () use ($router) {
 
-//    $router->get('/rrr_secret/1122233', function() {
-//        return view('vote.result')->with('vote',Vote::find(2));
-//    });
-
-    $router->group(['middleware' => 'vote_group'], function () use ($router) {
+	$router->group(['middleware' => 'vote_group'], function () use ($router) {
         // 访客 Ticket 验证
         $router->get('/ticket/{ticket}', 'VoteController@showVoteGroup');
         // 访客 Ticket 认证结束
@@ -51,8 +47,7 @@ $router->group(['prefix' => 'vote'], function () use ($router) {
         // 投票处理结束
     });
     $router->get('/id/{id:[0-9]+}/ticket/{ticket}', 'VoteController@showIndividualVote');
-    $router->get('/id/{id:[0-9]+}/ticket/{ticket}/qr_cache', 'VoteController@cacheOptions');
-    $router->get('/id/{id:[0-9]+}/ticket/{ticket}/get_qr_cache', 'VoteController@getCachedOptions');
+    $router->get('/id/{id:[0-9]+}/ticket/{ticket}/cache', 'VoteController@cacheOptions');
 
 });
 

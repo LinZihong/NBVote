@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Lang;
 
 class VoteController extends Controller
 {
+
+	protected $VOTE
 	/**
 	 * VoteController constructor.
 	 */
@@ -70,6 +72,7 @@ class VoteController extends Controller
 		$ticket = $request->route()[2]['ticket'];
 		$vote['times'] = count($vote->votedIds());
 		$vote['is_voted'] = Ticket::ticket($ticket)->isTicketUsed($id) ? '1' : '0';
+		$vote['has_selected'] = $this->getCachedOptions($ticket);
 
 		return JsonData(['vote' => $vote, 'ticket' => $ticket]);
 	}
@@ -86,7 +89,7 @@ class VoteController extends Controller
 		// init
 		$voteId = $request->route()[2]['id'];
 		$ticket = Ticket::ticket($request->route()[2]['ticket']);
-		$answers = collect(json_decode($request->getContent(),true)['selected']);
+		$answers = collect(json_decode($request->getContent(), true)['selected']);
 //		return $answers;
 		if ($answers->isEmpty()) {
 			return JsonStatus('非法表单', 401);
@@ -140,31 +143,19 @@ class VoteController extends Controller
 
 	public function cacheOptions(Request $request)
 	{
-		$option = $request['option_id'];
-		$status = $request['status'];
-		$time = $request['time'];
 		$ticket = $request->route()[2]['ticket'];
-		if (empty($cached = OptionCache::where('option', $option)->where('ticket', $ticket)->first())) {
-			OptionCache::create([
-				'option'      => $option,
-				'status'      => $status,
-				'ticket'      => $ticket,
-				'update_time' => $time,
-			]);
-
-			return JsonData('Saved!');
-		} else if ($time > $cached->update_time) {
-			$cached->update_time = $time;
-			$cached->status = $status;
-			$cached->save();
-		}
+		Cache::put($this->VoteCachePrefix . $ticket, $request->getContent(), 3600); // minutes
 
 		return JsonData('Cached!');
 	}
 
-	public function getCachedOptions(Request $request)
+	protected function getCachedOptions($ticket)
 	{
-		return JsonData(OptionCache::where('ticket', $request->route()[2]['ticket'])->get());
+		if (!empty($cache = Cache::get($this->VoteCachePrefix . $ticket))) {
+			return json_decode($cache, true);
+		}
+
+		return [];
 	}
 
 	/**
@@ -180,13 +171,13 @@ class VoteController extends Controller
 		$vote = Vote::with('questions.options')->find($voteId);
 		$voteArr = $vote->toArray();
 		$ticketAns = Ticket::ticket($request->route()[2]['ticket'])->answers->map(function ($item, $key) {
-		    return $item->option_id;
-        });
+			return $item->option_id;
+		});
 		foreach ($voteArr['questions'] as $i => $question) {
 			foreach ($question['options'] as $j => $option) {
-                $voteArr['questions'][$i]['options'][$j]['count'] = count($vote['questions'][$i]['options'][$j]->answers);
-                $voteArr['questions'][$i]['options'][$j]['percent'] = round(($vote['questions'][$i]['options'][$j]->getTotalNumber() / $vote['questions'][$i]->getTotalNumber()) * 100, 2);
-                $voteArr['questions'][$i]['options'][$j]['is_chosen'] = in_array($vote['questions'][$i]['options'][$j]->id, $ticketAns->toArray()) ? 1 : 0;
+				$voteArr['questions'][$i]['options'][$j]['count'] = count($vote['questions'][$i]['options'][$j]->answers);
+				$voteArr['questions'][$i]['options'][$j]['percent'] = round(($vote['questions'][$i]['options'][$j]->getTotalNumber() / $vote['questions'][$i]->getTotalNumber()) * 100, 2);
+				$voteArr['questions'][$i]['options'][$j]['is_chosen'] = in_array($vote['questions'][$i]['options'][$j]->id, $ticketAns->toArray()) ? 1 : 0;
 				unset($option['answers']);
 			}
 		}
