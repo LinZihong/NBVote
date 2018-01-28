@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Answer;
 use App\MicOptionCache;
 use App\Ticket;
+use App\Vote;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
