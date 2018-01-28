@@ -53,7 +53,7 @@ class VoteController extends Controller
 		foreach ($ticketArr['vote_group']['votes'] as $index => &$vote) {
 			$vote['is_voted'] = $ticket->isTicketUsed($vote['id']) ? '1' : '0';
 //			$vote['times'] = count($ticket['voteGroup']['votes'][$index]->votedIds());
-            $vote['times'] = '暂不显示';
+            $vote['times'] = $ticket['voteGroup']['votes'][$index]->voted_count . '(非实时)';
 		}
 
 		return JsonData($ticketArr);
