@@ -43,4 +43,12 @@ class AdminVoteController extends Controller
         }
         return JsonStatus('Done');
     }
+
+    function calcTimes(Request $request)
+    {
+        Vote::all()->each(function ($item, $key){
+            $item->voted_count = count($item->votedIds());
+        });
+        return JsonStatus('Done');
+    }
 }

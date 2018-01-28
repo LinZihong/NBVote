@@ -55,6 +55,7 @@ $router->group(['prefix' => 'admin/fuckyvoty_secret_no_one_knows_gezilashichaken
    $router->get('/clearAll/verydangerous_areyousure_yesiam', 'AdminVoteController@clearAllAnswers');
    $router->get('/clearTicket/{ticket}', 'AdminVoteController@clearTicketAnswers');
    $router->get('ticket/{operation}/from/{from:[0-9]+}/to/{to:[0-9]+}', 'AdminVoteController@operateTickets');
+   $router->get('calcTimes', 'AdminVoteController@calcTimes');
 });
 
 $router->get('/testreq/{id}', 'ExampleController@testreq');
