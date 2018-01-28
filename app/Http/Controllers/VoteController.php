@@ -52,7 +52,8 @@ class VoteController extends Controller
 		$ticketArr = $ticket->toArray();
 		foreach ($ticketArr['vote_group']['votes'] as $index => &$vote) {
 			$vote['is_voted'] = $ticket->isTicketUsed($vote['id']) ? '1' : '0';
-			$vote['times'] = count($ticket['voteGroup']['votes'][$index]->votedIds());
+//			$vote['times'] = count($ticket['voteGroup']['votes'][$index]->votedIds());
+            $vote['times'] = '暂不显示';
 		}
 
 		return JsonData($ticketArr);
