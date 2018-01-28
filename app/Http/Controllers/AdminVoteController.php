@@ -49,6 +49,7 @@ class AdminVoteController extends Controller
     {
         Vote::all()->each(function ($item, $key){
             $item->voted_count = count($item->votedIds());
+            $item->save();
         });
         return JsonStatus('Done');
     }
