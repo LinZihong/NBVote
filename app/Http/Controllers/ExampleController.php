@@ -8,6 +8,7 @@ define("CURL_TIMEOUT", 20);
 define("URL", "https://openapi.youdao.com/api");
 define("APP_KEY", "77957594e8cae0f8"); //替换为您的应用ID
 define("SEC_KEY", "0gA9t1gdzzcBTV0Bm1Oc4Wp0sGI4S4v1");//替换为您的密钥
+header('Content-type: application/json; charset=UTF-8');
 
 class ExampleController extends Controller
 {
@@ -149,6 +150,6 @@ class ExampleController extends Controller
 
 	public function wordy(Request $request)
 	{
-		return $this->translate($request->word,"EN","zh-CHS");
+		return $this->translate($request->word,"auto","zh-CHS");
 	}
 }
